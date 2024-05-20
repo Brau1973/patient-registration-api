@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  patient-registration-api:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      DB_URL: jdbc:mysql://db:3306/patient_registration?createDatabaseIfNotExist=true&serverTimezone=UTC
+      DB_USER_NAME: root
+      DB_PASSWORD: root
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:8.0.32
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: patient_registration
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
+    volumes:
+      - db_data:/var/lib/mysql
+volumes:
+  db_data:
