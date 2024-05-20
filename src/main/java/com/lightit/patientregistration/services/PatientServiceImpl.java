@@ -5,6 +5,7 @@ import com.lightit.patientregistration.dtos.PatientRegistrationRequestDTO;
 import com.lightit.patientregistration.exceptions.CreateUploadsDirectoryFailedException;
 import com.lightit.patientregistration.exceptions.MaxUploadSizeExceededException;
 import com.lightit.patientregistration.exceptions.InvalidFileExtensionException;
+import com.lightit.patientregistration.exceptions.ResourceNotFoundException;
 import com.lightit.patientregistration.models.Patient;
 import com.lightit.patientregistration.repositories.PatientRepository;
 import jakarta.mail.MessagingException;
@@ -78,7 +79,8 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void deletePatient(Long id) {
-        Patient patient = patientRepository.findById(id).orElse(null);
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id " + id));
         if (patient != null) {
             patientRepository.deleteById(id);
             if (patient.getDocumentPhotoPath() != null) {
@@ -94,15 +96,21 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public PatientDTO updatePatient(Long id, PatientRegistrationRequestDTO patientDTO) {
-        Patient patient = patientRepository.findById(id).orElse(null);
-        if (patient != null) {
-            patient.setName(patientDTO.getName());
-            patient.setEmail(patientDTO.getEmail());
-            patient.setPhoneNumber(patientDTO.getPhone());
-            Patient updatedPatient = patientRepository.save(patient);
-            return modelMapper.map(updatedPatient, PatientDTO.class);
-        }
-        return null;
+        return patientRepository.findById(id)
+                .map(existingPatient -> {
+                    if (patientDTO.getName() != null && !patientDTO.getName().isEmpty()) {
+                        existingPatient.setName(patientDTO.getName());
+                    }
+                    if (patientDTO.getEmail() != null && !patientDTO.getEmail().isEmpty()) {
+                        existingPatient.setEmail(patientDTO.getEmail());
+                    }
+                    if (patientDTO.getPhone() != null && !patientDTO.getPhone().isEmpty()) {
+                        existingPatient.setPhoneNumber(patientDTO.getPhone());
+                    }
+                    Patient updatedPatient = patientRepository.save(existingPatient);
+                    return modelMapper.map(updatedPatient, PatientDTO.class);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id " + id));
     }
 
     private void validateFileSize(MultipartFile documentPhoto) {

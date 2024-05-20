@@ -2,7 +2,7 @@
 FROM openjdk:21-slim
 
 # Copiar el archivo jar de la aplicación al contenedor
-ARG JAR_FILE=build/libs/*.jar
+ARG JAR_FILE=build/libs/patient-registration-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 
 # Exponer el puerto 8080 para permitir la comunicación con la aplicación
