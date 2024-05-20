@@ -16,4 +16,6 @@ This project is a complete CRUD (Create, Read, Update, Delete) application for m
 
 - **API Documentation**: The application uses Swagger for API documentation. This provides a user-friendly interface for exploring and testing the API endpoints. You can access the Swagger UI by navigating to the `/swagger-ui.html` endpoint on your application's base URL (for example, `http://localhost:8080/swagger-ui.html`).
 
+- **Postman Import File**: The project includes a Postman import file that contains a collection of requests for testing the API endpoints. You can import this file into Postman to quickly get started with testing the API. (It uses an environment variable `base_url` to set the base url of the API)
+
 Please refer to the API documentation for more details on how to use the API endpoints.
