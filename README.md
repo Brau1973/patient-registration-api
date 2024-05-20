@@ -2,6 +2,17 @@
 
 This project is a complete CRUD (Create, Read, Update, Delete) application for managing patient data. It is implemented using Java 21 and Spring Boot 3.2.5.
 
+## Docker Quick Start
+    cd patient-registration-api
+    
+    ./gradlew clean build
+
+    docker-compose build
+
+    docker-compose up
+
+    Once the Docker containers are running, you can access the app at http://localhost:8080.
+
 ## Features
 
 - **Data Validation**: The application uses `spring-boot-starter-validation` for validating the input data. This ensures that the data stored in the database is accurate and reliable.
